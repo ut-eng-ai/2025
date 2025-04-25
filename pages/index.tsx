@@ -25,6 +25,7 @@ export default function Home({ pdfs = [] }: HomeProps) {
   const [numPages, setNumPages] = useState<number>(0);
   const [pageNumber, setPageNumber] = useState<number>(1);
   const [windowWidth, setWindowWidth] = useState<number>(0);
+  const basePath = process.env.NEXT_PUBLIC_DEPLOY === 'true' ? '/2025' : '';
 
   useEffect(() => {
     const handleResize = () => {
@@ -49,7 +50,7 @@ export default function Home({ pdfs = [] }: HomeProps) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-white">
         <div className="w-full max-w-4xl p-4">
-          <p className="text-center text-[#231815]">PDFファイルが見つかりません。</p>
+          <p className="text-center text-primary">PDFファイルが見つかりません。</p>
         </div>
       </div>
     );
@@ -63,15 +64,16 @@ export default function Home({ pdfs = [] }: HomeProps) {
       <div className="flex flex-col items-center justify-center min-h-screen bg-white">
         <div className="w-full max-w-4xl p-4">
           <div className="flex justify-center items-center mb-8">
-            <div className="flex items-center">
+            <div className="flex flex-col items-center">
               <Image
-                src="/images/title.svg"
+                src={`${basePath}/images/title.svg`}
                 alt="AI時代の計算機と人間"
                 width={400}
                 height={100}
-                className="h-12 w-auto"
+                className="h-16 w-auto"
                 priority
               />
+              <p className="text-primary text-sm mt-2 font-bold">水曜5限 駒場キャンパス7号館 721教室</p>
             </div>
           </div>
 
@@ -80,7 +82,7 @@ export default function Home({ pdfs = [] }: HomeProps) {
               <div className="mb-8">
                 <div className="flex justify-center">
                   <Document
-                    file={`/pdfs/${selectedPdf.filename}`}
+                    file={`${basePath}/pdfs/${selectedPdf.filename}`}
                     onLoadSuccess={onDocumentLoadSuccess}
                     className="flex flex-col items-center"
                     loading={<div className="text-center">PDFを読み込み中...</div>}
@@ -149,36 +151,58 @@ export default function Home({ pdfs = [] }: HomeProps) {
             {pdfs.map((pdf) => (
               <div
                 key={pdf.filename}
-                className="p-3 shadow-neumorphism rounded-xl"
+                className="p-3 shadow-neumorphism rounded-xl h-16"
               >
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center space-x-4">
+                <div className="flex justify-between items-center h-full px-4">
+                  <div className="flex-1 flex items-center space-x-4">
                     <p className="text-sm text-primary font-bold">{pdf.date}</p>
                     <h2 className="text-lg font-medium text-primary font-bold">{pdf.title}</h2>
                   </div>
                   {pdf.filename && (
-                    <button
-                      onClick={() => {
-                        setSelectedPdf(pdf);
-                        setPageNumber(1);
-                      }}
-                      className="w-12 h-12 flex items-center justify-center rounded-full bg-neumorphism-light text-primary shadow-neumorphism hover:shadow-neumorphism-inset disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-6 w-6"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
+                    <div className="flex space-x-2">
+                      <button
+                        onClick={() => {
+                          setSelectedPdf(pdf);
+                          setPageNumber(1);
+                        }}
+                        className="w-12 h-12 flex items-center justify-center rounded-full bg-neumorphism-light text-primary shadow-neumorphism hover:shadow-neumorphism-inset disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                       >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                        />
-                      </svg>
-                    </button>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-6 w-6"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                          />
+                        </svg>
+                      </button>
+                      <a
+                        href={`${basePath}/pdfs/${pdf.filename}`}
+                        download
+                        className="w-12 h-12 flex items-center justify-center rounded-full bg-neumorphism-light text-primary shadow-neumorphism hover:shadow-neumorphism-inset disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-6 w-6"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                          />
+                        </svg>
+                      </a>
+                    </div>
                   )}
                 </div>
               </div>
